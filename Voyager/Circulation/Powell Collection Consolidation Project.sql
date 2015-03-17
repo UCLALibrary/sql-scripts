@@ -127,6 +127,22 @@ set
 where project_status like 'ERROR%'
 ;
 
+-- Item no longer has ZZZ code assigned - returned to stacks, remove from project
+delete
+from vger_support.powell_zzz_items z
+where exists (
+  select * from ucladb.item
+  where item_id = z.item_id
+)
+and not exists (
+  select * from ucladb.item i
+  inner join ucladb.item_stats ist on i.item_id = ist.item_id
+  inner join ucladb.item_stat_code isc on ist.item_stat_id = isc.item_stat_id
+  where i.item_id = z.item_id
+  and isc.item_stat_code = 'ZZZ'
+)
+;
+
 -- Non-College location:
 update vger_support.powell_zzz_items
 set 

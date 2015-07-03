@@ -15,9 +15,10 @@
 */
 
 -- CHANGE THE DATES FOR THE FISCAL YEAR
-define FY_START = '20130701 000000';
-define FY_END   = '20140630 235959';
+define FY_START = '20140701 000000';
+define FY_END   = '20150630 235959';
 
+-- Last year's data
 drop table vger_report.arl_stats purge;
 
 create table vger_report.arl_stats as
@@ -71,8 +72,19 @@ create index vger_report.ix_arl_stats_owning_unit on vger_report.arl_stats(ownin
 -- 234652 2011/2012
 -- 214672 2012/2013
 -- 216276 2013/2014
-select count(*), count(distinct item_id) from vger_report.arl_stats;
+-- 208941 2014/2015
+select count(distinct item_id) from vger_report.arl_stats; -- many boundwiths, so count distinct items
 
+
+/*****  Things to check -or not... *****/
+-- Items with multiple stat cats, probably errors
+select * from vger_report.arl_stats 
+where item_id in (
+  select item_id from vger_report.arl_stats
+  group by item_id, mfhd_id, bib_id
+  having count(*) > 1
+)
+order by item_id;
 
 -- items with no units (location or owning) won't be counted
 SELECT item_stat_code_desc, Count(*) FROM vger_report.arl_stats WHERE location_unit IS NULL AND owning_unit IS NULL GROUP BY item_stat_code_desc;

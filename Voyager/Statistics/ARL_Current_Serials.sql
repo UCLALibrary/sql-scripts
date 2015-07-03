@@ -5,8 +5,8 @@
 */
 
 -- CHANGE THE DATES FOR THE FISCAL YEAR
-define FY_START = '20130701 000000';
-define FY_END   = '20140630 235959';
+define FY_START = '20140701 000000';
+define FY_END   = '20150630 235959';
 
 -- Temp table of all serial data for multiple reports
 drop table vger_report.tmp_serials purge;
@@ -146,8 +146,8 @@ and exists (
 )
 /*** Uncomment sets of criteria as needed for 4b.ii/iii/iv ***/
 -- 4b.ii non gov docs electronic freely accessible
-and (substr(bib_008, 29, 1) not in ('a', 'c', 'f', 'i', 'l', 'm', 'o', 's', 'z') or substr(bib_008, 29, 1) is null)
-and exists (select * from vger_report.tmp_serials where bib_id = ts.bib_id and location_code = 'in') --electronic
+--and (substr(bib_008, 29, 1) not in ('a', 'c', 'f', 'i', 'l', 'm', 'o', 's', 'z') or substr(bib_008, 29, 1) is null)
+--and exists (select * from vger_report.tmp_serials where bib_id = ts.bib_id and location_code = 'in') --electronic
 -- 4b.iii non gov docs print
 --and (substr(bib_008, 29, 1) not in ('a', 'c', 'f', 'i', 'l', 'm', 'o', 's', 'z') or substr(bib_008, 29, 1) is null)
 --and not exists (select * from vger_report.tmp_serials where bib_id = ts.bib_id and location_code = 'in') --print

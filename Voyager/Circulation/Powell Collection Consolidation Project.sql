@@ -130,7 +130,8 @@ where project_status like 'ERROR%'
 -- Item no longer has ZZZ code assigned - returned to stacks, remove from project
 delete
 from vger_support.powell_zzz_items z
-where exists (
+where project_status not in ('Deleted', 'Packed')
+and exists (
   select * from ucladb.item
   where item_id = z.item_id
 )
@@ -217,12 +218,12 @@ and project_status not in ('Deleted', 'Packed')
 -- Apply all of the status changes
 commit;
 
-select count(*) from vger_support.powell_zzz_items;
-select * from vger_support.powell_zzz_items where project_status not in ('Pulled', 'Deleted');
+select project_status, count(*) as num from vger_support.powell_zzz_items group by project_status order by project_status;
 
+-- select count(*) from vger_support.powell_zzz_items;
+-- select * from vger_support.powell_zzz_items where project_status not in ('Pulled', 'Deleted');
 -- select * from vger_support.powell_zzz_items where project_status = 'Pulled' order by bib_id, mfhd_id, item_id;
 
-select project_status, count(*) as num from vger_support.powell_zzz_items group by project_status order by project_status;
 
 -- Cleanup for box-testing
 /*
@@ -239,11 +240,3 @@ Error deleting HolID 7008744 : Line item attached
 -- and many more
 */
 
-select distinct
-z.bib_id, z.mfhd_id, bt.bib_format
-from  vger_support.powell_zzz_items z
-inner join ucladb.bib_text bt on z.bib_id = bt.bib_id
-where bt.bib_format != 'am'
-and exists ( select * from ucladb.bib_mfhd where bib_id = z.bib_id and mfhd_id = z.mfhd_id)
-order by z.bib_id
-;

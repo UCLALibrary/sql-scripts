@@ -34,12 +34,13 @@ select
 , f.ledger_name
 , f.fund_name
 , f.fund_code
-, ili.piece_identifier -- rarely used, more noise than value
+-- , ili.piece_identifier -- rarely used, more noise than value
 , round( (ilif.percentage / 1000000), 2) as percentage
 , ucladb.toBaseCurrency(ilif.amount, i.currency_code, i.conversion_rate) as usd_amount
 , i.invoice_number
 , ist.invoice_status_desc as invoice_status
 , lis.line_item_status_desc as line_item_status
+, po.po_number
 from vger_report.mfhd_spac_code m
 inner join ucladb.bib_mfhd bm
   on m.mfhd_id = bm.mfhd_id
@@ -50,6 +51,10 @@ left outer join ucladb.line_item_copy_status lics
   on m.mfhd_id = lics.mfhd_id
 left outer join ucladb.line_item_status lis
   on lics.line_item_status = lis.line_item_status
+left outer join ucladb.line_item li
+  on lics.line_item_id = li.line_item_id
+left outer join ucladb.purchase_order po
+  on li.po_id = po.po_id
 left outer join ucladb.invoice_line_item_funds ilif
   on lics.copy_id = ilif.copy_id
 left outer join ucladb.ucla_fundledger_vw f
@@ -61,7 +66,7 @@ left outer join ucladb.invoice i
   on ili.invoice_id = i.invoice_id
 left outer join ucladb.invoice_status ist
   on i.invoice_status = ist.invoice_status
-where m.spac_code = 'LIU1' -- parameter in Analyzer
+where m.spac_code = 'ABUNT' -- parameter in Analyzer
 order by m.mfhd_id
 ;
 

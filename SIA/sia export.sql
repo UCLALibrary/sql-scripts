@@ -1,11 +1,12 @@
 select 
 	s.SessionDateTime,
 	atl.ActivityType as SessionType,
-	a.Title,
-	dbo.build_sess_dept_title(s.SessionID) as Departments,
-	s.CourseNumber,
-	s.CourseSection,
-	s.GroupName,
+	'"' + coalesce(a.Title, 'N/A') + '"' As Title,
+	'"' + coalesce(dbo.build_sess_dept_title(s.SessionID), 'N/A') + '"' as Departments,
+	'"' + coalesce(s.CourseNumber, 'N/A') + '"' as CourseNumber,
+	'"' + coalesce(s.CourseSection, 'N/A') + '"' as CourseSection,
+	'"' + coalesce(s.GroupName, 'N/A') + '"' as GroupName,
+	a.Description,
 	dbo.build_learner_cats(s.SessionID) as LearnerTypess,
 	case
 		when NumAttendees IS not null then NumAttendees
@@ -18,8 +19,14 @@ select
 	dbo.get_developer_units(a.ActivityID) as DeveloperUnits,
 	dbo.get_presenters_by_session(s.SessionID) as Presenters,
 	dbo.get_presenter_units(s.SessionID) as PresenterUnits,
-	dbo.get_faculty_by_session(s.SessionID) AS FacContacts,
-	dbo.build_initiatives(s.SessionID) as Initiatives
+	case
+		when LEN('"' + coalesce(dbo.get_faculty_by_session(s.SessionID), 'N/A') + '"') = 2 then 'N/A'
+		else '"' + coalesce(dbo.get_faculty_by_session(s.SessionID), 'N/A') + '"'
+	end AS FacContacts,
+	case
+		when LEN('"' + coalesce(dbo.build_initiatives(s.SessionID), 'N/A') + '"') = 2 then 'N/A'
+		else '"' + coalesce(dbo.get_faculty_by_session(s.SessionID), 'N/A') + '"'
+	end AS Initiatives
 from 
 	dbo.Session s
 	join dbo.SessionActivity sa on s.SessionID = sa.SessionID

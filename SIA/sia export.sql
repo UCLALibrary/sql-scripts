@@ -1,12 +1,12 @@
 select 
 	s.SessionDateTime,
 	atl.ActivityType as SessionType,
-	'"' + coalesce(a.Title, 'N/A') + '"' As Title,
+	'"' + replace(replace(coalesce(a.Title, 'N/A'), ',', ';'), '"', '''') + '"' As Title,
 	'"' + coalesce(dbo.build_sess_dept_title(s.SessionID), 'N/A') + '"' as Departments,
-	'"' + coalesce(s.CourseNumber, 'N/A') + '"' as CourseNumber,
-	'"' + coalesce(s.CourseSection, 'N/A') + '"' as CourseSection,
-	'"' + coalesce(s.GroupName, 'N/A') + '"' as GroupName,
-	a.Description,
+	'"' + replace(replace(coalesce(s.CourseNumber, 'N/A'), ',', ';'), '"', '''')  + '"' as CourseNumber,
+	'"' + replace(replace(coalesce(s.CourseSection, 'N/A'), ',', ';'), '"', '''')  + '"' as CourseSection,
+	'"' + replace(replace(coalesce(s.GroupName, 'N/A'), ',', ';'), '"', '''')  + '"' as GroupName,
+	'"' + replace(replace(cast(a.Description as varchar(max)), ',', ';'), '"', '''') + '"' as Description,
 	dbo.build_learner_cats(s.SessionID) as LearnerTypess,
 	case
 		when NumAttendees IS not null then NumAttendees
@@ -25,7 +25,7 @@ select
 	end AS FacContacts,
 	case
 		when LEN('"' + coalesce(dbo.build_initiatives(s.SessionID), 'N/A') + '"') = 2 then 'N/A'
-		else '"' + coalesce(dbo.get_faculty_by_session(s.SessionID), 'N/A') + '"'
+		else '"' + coalesce(dbo.build_initiatives(s.SessionID), 'N/A') + '"'
 	end AS Initiatives
 from 
 	dbo.Session s

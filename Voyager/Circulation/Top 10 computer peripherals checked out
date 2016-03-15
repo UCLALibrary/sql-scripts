@@ -1,15 +1,6 @@
 SELECT  DISTINCT
 Count (*) AS CHARGES,
---mm.normalized_call_no,
---bt.author,
---bt.bib_id,
 it.item_type_name
---bt.TITLE,
---mm.display_call_no,
---bt.publisher,
---bt.publisher_date,
---l.location_code
-
 --bt.imprint,
 --bt.place_code,
 --bt.LANGUAGE,
@@ -47,13 +38,6 @@ INNER JOIN CIRCCHARGES_VW cc ON i.item_ID = cc.item_ID
                       --AND ROWNUM >= 25
 
     GROUP BY
-   -- bt.bib_id,
-   -- bt.author,
-   -- bt.TITLE,
-   -- mm.display_call_no,
-   -- bt.publisher,
-   -- bt.publisher_date,
-   -- l.location_code,
     it.item_type_name
 
 

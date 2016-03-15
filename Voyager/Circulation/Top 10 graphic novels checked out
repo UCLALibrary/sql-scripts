@@ -1,19 +1,11 @@
 SELECT  DISTINCT
 Count (*) AS CHARGES,
---mm.normalized_call_no,
 bt.author,
 bt.TITLE,
 mm.display_call_no,
 bt.publisher,
 bt.publisher_date,
 l.location_code,
-
---bt.imprint,
---bt.place_code,
---bt.LANGUAGE,
---(SELECT REPLACE(normal_heading, 'UCOCLC', '')
-  --    FROM bib_index WHERE bib_id = bt.bib_id AND index_code = '0350' AND normal_heading LIKE 'UCOCLC%' AND ROWNUM < 2
-  --) AS oclc_number,
 bt.bib_id
 --ib.item_barcode,
 --mm.mfhd_id

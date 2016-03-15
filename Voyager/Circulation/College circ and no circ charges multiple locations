@@ -1,8 +1,6 @@
 SELECT DISTINCT
 Count (*) AS CHARGES,
---0 AS charges,
 cc.patron_group_name,
-
 bt.bib_id,
 --item.create_date AS CREATE_date,
 mm.normalized_call_no,

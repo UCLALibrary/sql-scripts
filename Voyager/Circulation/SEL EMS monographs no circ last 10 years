@@ -25,7 +25,7 @@ inner join ucladb.ITEM_STATUS ist on i.ITEM_ID = ist.ITEM_ID
 inner join ucladb.ITEM_STATUS_TYPE isty on ist.ITEM_STATUS = isty.ITEM_STATUS_TYPE
 inner join ITEM_BARCODE ib ON i.ITEM_ID = ib.ITEM_ID
 
---left outer join CIRCCHARGES_VW cc ON mm.MFHD_ID = cc.MFHD_ID
+
 
             WHERE l.location_code = 'sm'
                   AND bt.bib_format = 'am'

@@ -1,0 +1,55 @@
+select
+	ru.Descrpt AS Unit,
+	rsp.Descrpt AS ServicePoint,
+	rt.Descrpt AS QuestionType,
+	rm.Descrpt AS InteractionMode,
+-- '"' + replace(replace(coalesce(a.Title, 'N/A'), ',', ';'), '"', '''') + '"'
+	rs.Created_DT,
+	case
+		WHEN rs.LogonID is null then '"' + 'N/A'  + '"'
+		WHEN LEN(ltrim(rtrim(rs.LogonID))) = 0 then '"' + 'N/A'  + '"'
+		else rs.LogonID
+	end AS UserName,
+	rs.TimeSpent,
+	case
+		when dl.Department IS null then '"' + 'N/A'  + '"'
+		else dl.Department
+	end AS Department,
+	case
+		when LEN('"' + replace(replace(coalesce(ri.Course, 'N/A'), ',', ';'), '"', '''') + '"') = 2 THEN '"' + 'N/A' + '"'
+		else '"' + replace(replace(coalesce(ri.Course, 'N/A'), ',', ';'), '"', '''') + '"'
+	end AS Course,
+	case
+		when pt.PatronType IS null then '"' + 'N/A'  + '"'
+		else pt.PatronType
+	end AS PatronType,
+	case
+		when LEN('"' + replace(replace(coalesce(ri.PatronFeedback, 'N/A'), ',', ';'), '"', '''') + '"') = 2 THEN '"' + 'N/A' + '"'
+		else '"' + replace(replace(coalesce(ri.PatronFeedback, 'N/A'), ',', ';'), '"', '''') + '"'
+	end AS PatronFeedback,
+	case
+		when LEN('"' + replace(replace(coalesce(ri.StaffFeedback, 'N/A'), ',', ';'), '"', '''') + '"') = 2 THEN '"' + 'N/A' + '"'
+		else '"' + replace(replace(coalesce(ri.StaffFeedback, 'N/A'), ',', ';'), '"', '''') + '"'
+	end AS StaffFeedback,
+	case
+		when LEN('"' + replace(replace(coalesce(ri.Topic, 'N/A'), ',', ';'), '"', '''') + '"') = 2 THEN '"' + 'N/A' + '"'
+		else '"' + replace(replace(coalesce(ri.Topic, 'N/A'), ',', ';'), '"', '''') + '"'
+	end AS Topic,
+	case
+		when LEN('"' + replace(replace(coalesce(rr.ReferralText, 'N/A'), ',', ';'), '"', '''') + '"') = 2 THEN '"' + 'N/A' + '"'
+		else '"' + replace(replace(coalesce(rr.ReferralText, 'N/A'), ',', ';'), '"', '''') + '"'
+	end AS ReferralText
+from
+	dbo.ReferenceStatistics rs
+	inner join dbo.RefUnit ru on SUBSTRING(rs.AggregateID,1,5) = ru.UnitID
+	inner join dbo.RefServicePoint rsp on SUBSTRING(rs.AggregateID,6,2) = rsp.PointID
+	inner join dbo.RefType rt on SUBSTRING(rs.AggregateID,8,2) = rt.TypeID
+	inner join dbo.RefMode rm on SUBSTRING(rs.AggregateID,10,2) = rm.ModeID
+	left join dbo.RefStatInteractions rsi on rs.RecordID = rsi.RefStatID
+	left join dbo.RefInteractions ri on rsi.RefInteractionID = ri.InteractionID
+	left join dbo.RefStatReferrals rsr on rs.RecordID = rsr.RefStatID
+	left join dbo.RefReferrals rr on rsr.RefReferralID = rr.ReferralID
+	left join dbo.PatronType pt on ri.PatronType = pt.PatronTypeID
+	left join SIA.dbo.DepartmentLookup dl on ri.DepartmentID = dl.DepartmentID
+where
+	rs.Created_DT between '2016-01-04' and '2016-03-18'

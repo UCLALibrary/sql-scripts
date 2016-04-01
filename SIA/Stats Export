@@ -4,7 +4,8 @@ select
 	rt.Descrpt AS QuestionType,
 	rm.Descrpt AS InteractionMode,
 -- '"' + replace(replace(coalesce(a.Title, 'N/A'), ',', ';'), '"', '''') + '"'
-	rs.Created_DT,
+	convert(varchar,rs.Created_DT,101) AS EventDate,
+	convert(varchar,rs.Created_DT,114) AS EventTime,
 	case
 		WHEN rs.LogonID is null then '"' + 'N/A'  + '"'
 		WHEN LEN(ltrim(rtrim(rs.LogonID))) = 0 then '"' + 'N/A'  + '"'
@@ -13,7 +14,7 @@ select
 	rs.TimeSpent,
 	case
 		when dl.Department IS null then '"' + 'N/A'  + '"'
-		else dl.Department
+		else replace(dl.Department, ',', ';')
 	end AS Department,
 	case
 		when LEN('"' + replace(replace(coalesce(ri.Course, 'N/A'), ',', ';'), '"', '''') + '"') = 2 THEN '"' + 'N/A' + '"'
@@ -36,8 +37,8 @@ select
 		else '"' + replace(replace(coalesce(ri.Topic, 'N/A'), ',', ';'), '"', '''') + '"'
 	end AS Topic,
 	case
-		when LEN('"' + replace(replace(coalesce(rr.ReferralText, 'N/A'), ',', ';'), '"', '''') + '"') = 2 THEN '"' + 'N/A' + '"'
-		else '"' + replace(replace(coalesce(rr.ReferralText, 'N/A'), ',', ';'), '"', '''') + '"'
+		when LEN('"' + replace(replace(replace(coalesce(rr.ReferralText, 'N/A'), ',', ';'), '"', ''''), '\n',';') + '"') = 2 THEN '"' + 'N/A' + '"'
+		else '"' + replace(replace(replace(coalesce(rr.ReferralText, 'N/A'), ',', ';'), '"', ''''), '\n',';') + '"'
 	end AS ReferralText
 from
 	dbo.ReferenceStatistics rs
@@ -52,4 +53,5 @@ from
 	left join dbo.PatronType pt on ri.PatronType = pt.PatronTypeID
 	left join SIA.dbo.DepartmentLookup dl on ri.DepartmentID = dl.DepartmentID
 where
-	rs.Created_DT between '2016-01-04' and '2016-03-18'
+	SUBSTRING(rs.AggregateID, 8, 2) <> '00' 
+	AND rs.Created_DT between '2016-01-04' and '2016-03-18'

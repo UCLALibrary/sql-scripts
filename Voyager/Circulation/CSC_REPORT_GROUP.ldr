@@ -1,0 +1,27 @@
+LOAD DATA
+INFILE *
+Truncate
+INTO TABLE "CSC_REPORT_GROUP"
+FIELDS TERMINATED BY ',' optionally enclosed by '"'
+TRAILING NULLCOLS
+(REPORT_GROUP_ID,
+REPORT_GROUP_DESC)
+begindata
+"5","Ext Students"
+"3","AP/Trans Alliance"
+"2","Access Only"
+"1","Academic"
+"19","Law Library Use Only"
+"18","Undergrad"
+"17","UCLA Alumni"
+"16","Staff"
+"15","Law Grad"
+"14","Law Academic"
+"13","Internal Library"
+"12","ILL"
+"11","Grad"
+"10","Associates"
+"9","Fee, 5"
+"8","Fee, 20"
+"7","Fee, 10"
+"6","External Unlimited"

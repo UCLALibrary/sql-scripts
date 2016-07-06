@@ -1,0 +1,37 @@
+SELECT
+	RU.Descrpt + ' ' +  RSP.Descrpt AS ServicePoint,
+	CAST(DATEPART(Month, Created_DT) AS VARCHAR) + '/' +
+	CAST(DATEPART(Day, Created_DT) AS VARCHAR) + '/' +
+	CAST(DATEPART(Year, Created_DT) AS VARCHAR) AS the_date,
+	case
+		WHEN DATEPART(DW, Created_DT) = 1 THEN 'Sun'
+		WHEN DATEPART(DW, Created_DT) = 2 THEN 'Mon'
+		WHEN DATEPART(DW, Created_DT) = 3 THEN 'Tue'
+		WHEN DATEPART(DW, Created_DT) = 4 THEN 'Wed'
+		WHEN DATEPART(DW, Created_DT) = 5 THEN 'Thu'
+		WHEN DATEPART(DW, Created_DT) = 6 THEN 'Fri'
+		WHEN DATEPART(DW, Created_DT) = 7 THEN 'Sat'
+	END AS day_of_week,
+	"person" = CASE WHEN SUBSTRING(RS.AggregateID, 10, 2) = '01' THEN [Count] ELSE 0 END,
+	"telephone" = CASE WHEN SUBSTRING(RS.AggregateID, 10, 2) = '02' THEN [Count] ELSE 0 END,
+	"email" = CASE WHEN SUBSTRING(RS.AggregateID, 10, 2) = '03' THEN [Count] ELSE 0 END,
+	person_time = COALESCE(CASE WHEN SUBSTRING(RS.AggregateID, 10, 2) = '01' THEN TimeSpent ELSE 0 END, 0),
+	telephone_time = COALESCE(CASE WHEN SUBSTRING(RS.AggregateID, 10, 2) = '02' THEN TimeSpent ELSE 0 END, 0),
+	email_time = COALESCE(CASE WHEN SUBSTRING(RS.AggregateID, 10, 2) = '03' THEN TimeSpent ELSE 0 END, 0)
+FROM
+	ReferenceStatistics RS
+	JOIN RefUnit RU ON RU.UnitID = SUBSTRING(RS.AggregateID, 1, 5)
+	JOIN RefServicePoint RSP ON RSP.PointID = SUBSTRING(RS.AggregateID, 6, 2)
+WHERE
+	SUBSTRING(AggregateID, 8, 2) <> '00'
+	AND AggregateID LIKE 'YRL08%'
+	AND InputMethod = 2
+	AND
+	(
+		CAST(CAST(DATEPART(Month, Created_DT) AS VARCHAR) + '/' +
+		CAST(DATEPART(Day, Created_DT) AS VARCHAR) + '/' +
+		CAST(DATEPART(Year, Created_DT) AS VARCHAR) AS SMALLDATETIME) BETWEEN '7/1/2015' AND '6/30/2016'
+	)
+ORDER BY
+	ServicePoint,
+	the_date

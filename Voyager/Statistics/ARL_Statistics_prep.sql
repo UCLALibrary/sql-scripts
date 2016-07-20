@@ -15,8 +15,8 @@
 */
 
 -- CHANGE THE DATES FOR THE FISCAL YEAR
-define FY_START = '20140701 000000';
-define FY_END   = '20150630 235959';
+define FY_START = '20150701 000000';
+define FY_END   = '20160630 235959';
 
 -- Last year's data
 drop table vger_report.arl_stats purge;
@@ -73,6 +73,7 @@ create index vger_report.ix_arl_stats_owning_unit on vger_report.arl_stats(ownin
 -- 214672 2012/2013
 -- 216276 2013/2014
 -- 208941 2014/2015
+-- 198623 2015/2016
 select count(distinct item_id) from vger_report.arl_stats; -- many boundwiths, so count distinct items
 
 

@@ -5,8 +5,8 @@
 */
 
 -- CHANGE THE DATES FOR THE FISCAL YEAR
-define FY_START = '20140701 000000';
-define FY_END   = '20150630 235959';
+define FY_START = '20150701 000000';
+define FY_END   = '20160630 235959';
 
 -- Temp table of all serial data for multiple reports
 drop table vger_report.tmp_serials purge;
@@ -111,20 +111,20 @@ AND line_item_status_desc NOT IN ('Cancelled') --and line_item_status_desc is no
 -- 4a.ii print (non-electronic)
 --AND NOT EXISTS (SELECT * FROM vger_report.tmp_serials WHERE bib_id = ts.bib_id AND location_code = 'in')
 ;
-
+/*
 -- 4b. Number of serial titles currently received but not purchased, in nonintersecting sets:
 -- 4b.i Consortial: by our definition, we have no non-paid consortial titles
 -- 4b.ii Freely accessible
 -- 4b.iii Print (and other format) - Exchanges, gifts, etc.
 -- 4b.iv Government documents: 008/28 in (acfilmosz)
 -- another view:
----- Gov docs (print & electronic): 4b.iv
+---- Gov docs (print and electronic): 4b.iv
 ---- Non gov docs
 ------ print: 4b.iii
 ------ electronic
 -------- consortial: 4b.i
 -------- freely accessible: 4b.ii
-
+*/
 select
 	count(distinct ts.bib_id) as titles
 from vger_report.tmp_serials ts
@@ -151,7 +151,7 @@ and exists (
 -- 4b.iii non gov docs print
 --and (substr(bib_008, 29, 1) not in ('a', 'c', 'f', 'i', 'l', 'm', 'o', 's', 'z') or substr(bib_008, 29, 1) is null)
 --and not exists (select * from vger_report.tmp_serials where bib_id = ts.bib_id and location_code = 'in') --print
--- 4b.iv gov docs bib 008/28, print & electronic
+-- 4b.iv gov docs bib 008/28, print and electronic
 --and substr(bib_008, 29, 1) in ('a', 'c', 'f', 'i', 'l', 'm', 'o', 's', 'z')
 ;
 

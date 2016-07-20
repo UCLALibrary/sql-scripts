@@ -5,7 +5,7 @@
     Set BEFORE_DATE as needed.
 */
 
-define CREATED_BEFORE = '2015-07-01';
+define CREATED_BEFORE = '2016-07-01';
 
 -- records by database
 SELECT

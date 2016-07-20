@@ -2,7 +2,7 @@
 -- Used starting 2012/2013, per Roxanne Peck; see Footprints 29910
 
 -- Change end_date to start of fiscal year after the one you want (e.g., 20080701 for 2007/2008)
-define end_date = '20150701';
+define end_date = '20160701';
 
 create table vger_report.tmp_ebook_bibs as
 select distinct -- a few bibs have multiple 'in' holdings.......
@@ -26,11 +26,13 @@ and bt.bib_id <= (
 );
 
 create index vger_report.ix_tmp_ebook_bibs on vger_report.tmp_ebook_bibs(bib_id);
+
+select count(*) from tmp_ebook_bibs;
 -- 666975 20130325 for 2011/2012
 -- 739385 20130701 for 2012/2013
 -- 785828 20140702 for 2013/2014
 -- 830366 20150702 for 2014/2015
-select count(*) from tmp_ebook_bibs;
+-- 868697 20160718 for 2015/2016
 
 -- Working table with all 856 fields for tmp_ebook_bibs
 -- Takes about 5 minutes to create
@@ -50,6 +52,7 @@ select count(distinct bib_id) from vger_report.tmp_ebook_urls;
 -- 739303 20130701 for 2012/2013 (a few bibs don't have 856 $u....)
 -- 785783 20140702 for 2013/2014
 -- 830284 20150702 for 2014/2015
+-- 867669 20160718 for 2015/2016
 
 /*********
   Start with working tables, include / exclude based on various criteria
@@ -126,6 +129,7 @@ from d
 -- 735257 20130701 for 2012/2013.  This is the figure reported on E-books sheet in file sent to Leslie.  No need to report e-monos & e-atlases separately per Leslie.
 -- 781437 20140702 for 2013/2014.
 -- 825532 20150702 for 2014/2015.
+-- 862728 20160718 for 2015/2016
 
 /***** Individual queries for testing / clean-up *****/
 

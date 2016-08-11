@@ -21,7 +21,7 @@ where b.s948a like 'clk%'
 --and b.s948c like decode(#prompt('p_month')#, 'LAST_MONTH', last_month.last_month, #prompt('p_month')#) || '%'
 and b.s948c like last_month.last_month || '%'
 -- Fields: 001, 090, 099, 1xx, 245, 245, 26x, 300, 5xx, 910, 948
-and regexp_like(sf.tag, '^001|^090|^099|^1..|^245|^246|^26.|^300|^5..|^910|^948')
+and regexp_like(sf.tag, '^001|^049|^090|^099|^1..|^245|^246|^26.|^300|^5..|^910|^948')
 order by b.bib_id, sf.field_seq
 ;
 --71

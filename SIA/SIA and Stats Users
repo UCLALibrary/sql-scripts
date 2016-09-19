@@ -1,0 +1,28 @@
+SIA
+select 
+	'"' + LastName + ', ' + FirstName + '"' as LibName,
+	Email
+	,MAX(s.UpdatedDT) as latest_edit
+from
+	dbo.Librarian l
+	left join dbo.Session s on l.LibrarianID = s.CreatedBy
+where
+	Active = 1 and LTRIM(rtrim(Email)) != ''
+group by
+	'"' + LastName + ', ' + FirstName + '"',
+	Email
+order by
+	LibName
+
+Stats
+SELECT '"' + [LastName] + ', ' + [FirstName] + '"' as libname
+      ,[EmailAddress]
+      ,MAX(rs.Created_DT) as last_edit
+  FROM [Public_Service_Stats].[dbo].[RefUserAccounts] rua
+  left join [Public_Service_Stats].dbo.ReferenceStatistics rs on rua.LogonID = rs.LogonID
+  where LTRIM(rtrim([EmailAddress])) != ''
+  group by
+  '"' + [LastName] + ', ' + [FirstName] + '"'
+      ,[EmailAddress]
+  order by libname
+

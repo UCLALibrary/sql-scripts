@@ -2,6 +2,8 @@
     https://jira.library.ucla.edu/browse/RR-224
     2016-10-28 akohler
 */
+
+-- Run as vger_support due to permissions
 select 
   pr.request_id
 , pr.request_date
@@ -32,15 +34,17 @@ from vger_support.pia_request pr
 left outer join ucladb.bib_mfhd bm on pr.bib_id = bm.bib_id
 left outer join ucladb.mfhd_master mm on bm.mfhd_id = mm.mfhd_id
 left outer join ucladb.location l on mm.location_id = l.location_id
-where pr.request_date between to_date('2016-04-01', 'YYYY-MM-DD') and to_date('2016-07-01', 'YYYY-MM-DD') -- 806 for 4/1-6/30 2016
--- and pr.request_status = 'ORDERED' -- about 10% never get ordered?
---and mm.display_call_no is not null
+-- where pr.request_date between to_date('2015-04-01', 'YYYY-MM-DD') and to_date('2015-07-01', 'YYYY-MM-DD') -- 1026 for 4/1-6/30 2015
+where pr.request_date between to_date('2016-04-01', 'YYYY-MM-DD') and to_date('2016-07-01', 'YYYY-MM-DD') -- 938 for 4/1-6/30 2016
 order by normalized_call_no, location_code
 ;
 
-
-select *
-from vger_support.call_number_subject_map
-where subject_type = 'ERDB'
-order by norm_call_no_start
+-- Requests by month
+select
+  trunc(pr.request_date, 'MM') as request_month
+, count(*) as requests
+from vger_support.pia_request pr
+group by trunc(pr.request_date, 'MM')
+order by request_month
 ;
+

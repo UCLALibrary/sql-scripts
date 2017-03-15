@@ -41,8 +41,8 @@ Exclude:
 */
 
 -- CHANGE THE DATES
-DEFINE START_DATE = '20150601';
-DEFINE END_DATE   = '20150701';
+DEFINE START_DATE = '20170201';
+DEFINE END_DATE   = '20170301';
 
 --About 1 minute
 CREATE TABLE vger_report.tmp_urls AS
@@ -122,4 +122,3 @@ order by format, ind1, bib_id
 ;
 
 DROP TABLE vger_report.tmp_urls purge;
-

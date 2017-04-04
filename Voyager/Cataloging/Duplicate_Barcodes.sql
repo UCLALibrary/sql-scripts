@@ -12,6 +12,7 @@ select
 , bm.bib_id
 , bm.mfhd_id
 , d.item_id
+, substr(bt.bib_format, 2, 1) as format
 , mi.item_enum
 , l.location_code
 , mm.display_call_no

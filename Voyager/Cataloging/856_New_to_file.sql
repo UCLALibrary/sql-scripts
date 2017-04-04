@@ -1,6 +1,6 @@
 /*
 1.  New to file URLs (for now, monthly; eventually we might want a weekly report)
-Criteria: New Voyager records containing 856s.
+Criteria: New Voyager records containing 856s, in ucladb only.
 Divisions: Separate reports for monographs and non-monographs.
 Subdivide report: (1) with 1st indicator = 4; (2) all other 856s (Note: Entries lacking 1st indicator 4 or 7 just need to be deleted; those with 1st indicator 7 need to be evaluated and edited or deleted.)
 
@@ -35,23 +35,16 @@ Exclude:
 
 */
 
--------------------------------
-/*	Run as vger_report
-	Applies only to ucladb
-*/
-
--- CHANGE THE DATES
-DEFINE START_DATE = '20150601';
-DEFINE END_DATE   = '20150701';
-
---About 1 minute
-CREATE TABLE vger_report.tmp_urls AS
+-- 2017-04-04: Now in Analyzer at: Cataloging -> Bib 856 new to file (monthly)
+-- Scheduled to run first Tuesday of month at 3 pm Pacific
 WITH bibs AS (
 	SELECT bib_id
 	FROM ucladb.bib_history
 	WHERE action_type_id = 1 --create
-	AND action_date BETWEEN To_Date('&START_DATE', 'YYYYMMDD') AND To_Date('&END_DATE', 'YYYYMMDD') --no time, so less than end date
+  -- last_month is derived from today: go to start of this month, go back one day, truncate to month.
+  and trunc(action_date, 'month') = trunc(trunc(sysdate, 'month') - 1, 'month')
 )
+, tmp_urls as (
 SELECT /*+ ORDERED */
 	s.record_id
 ,	s.record_id || ':' || s.field_seq AS handle
@@ -62,25 +55,20 @@ SELECT /*+ ORDERED */
 FROM vger_subfields.ucladb_bib_subfield s
 WHERE s.tag LIKE '856%'
 AND EXISTS (SELECT * FROM bibs WHERE bib_id = s.record_id)
-;
-
-CREATE INDEX vger_report.tmp_urls_ix_handle ON vger_report.tmp_urls (handle);
-CREATE INDEX vger_report.tmp_urls_ix_tag ON vger_report.tmp_urls (tag);
-CREATE INDEX vger_report.tmp_urls_ix_sfd ON vger_report.tmp_urls (subfield);
-
---GRANT SELECT ON vger_report.tmp_urls TO ucla_preaddb;
-with good_856 as (
-  select record_id, field_seq, ind1, handle from vger_report.tmp_urls
+)
+--select count(*) from tmp_urls -- 18157
+, good_856 as (
+  select record_id, field_seq, ind1, handle from tmp_urls
   minus
-  select record_id, field_seq, ind1, handle from vger_report.tmp_urls
+  select record_id, field_seq, ind1, handle from tmp_urls
     where tag = '856x'
     and subfield in ('CDL', 'UCLA LAW')
   minus
-  select record_id, field_seq, ind1, handle from vger_report.tmp_urls
+  select record_id, field_seq, ind1, handle from tmp_urls
     where tag = '856z'
     and subfield = 'UCLA LAW SCHOOL USE ONLY'
   minus
-  select record_id, field_seq, ind1, handle from vger_report.tmp_urls
+  select record_id, field_seq, ind1, handle from tmp_urls
     where tag = '856u'
     AND (	subfield LIKE '%BIBPURL.OCLC.ORG%'
       OR	subfield LIKE '%PURL.FDLP.GOV%'
@@ -91,7 +79,7 @@ with good_856 as (
       OR	subfield LIKE '%UCLIBS.ORG%'
     ) -- 856u subfield
   minus
-  select record_id, field_seq, ind1, handle from vger_report.tmp_urls
+  select record_id, field_seq, ind1, handle from tmp_urls
     where tag = '8563'
     AND (	subfield LIKE '%BIBLIOGRAPHIC DESCRIPTION%'
       OR	subfield LIKE '%BOOK REVIEW%'
@@ -120,6 +108,4 @@ from good_856 tmp
 inner join ucladb.bib_text bt on tmp.record_id = bt.bib_id
 order by format, ind1, bib_id
 ;
-
-DROP TABLE vger_report.tmp_urls purge;
 

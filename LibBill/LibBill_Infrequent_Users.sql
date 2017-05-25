@@ -19,8 +19,10 @@ with actions as (
 )
 , users as (
   select
-    su.user_role
+    su.last_name
+  , su.first_name
   , su.user_name
+  , su.user_role
   , su.create_date
   , ( select max(created_date) from actions where created_by = su.user_name) as most_recent
   from staff_user su
@@ -31,7 +33,7 @@ select *
 from users
 where most_recent is null
 or most_recent <= trunc(sysdate) - 90
-order by user_role, user_name
+order by last_name, first_name
 ;
 -- 51 rows
 

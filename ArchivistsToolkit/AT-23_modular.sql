@@ -32,7 +32,7 @@ with level0 as (
 	,	0	as levelNumber
 	from Resources r
 	where r.resourceidentifier1 = 'LSC'
-	and r.resourceidentifier2 = '1893'
+	and r.resourceidentifier2 = '0342' --'1893'--'0342'
 )
 ,	level1 as (
 	select
@@ -125,8 +125,9 @@ left outer join ArchDescriptionRepeatingData n -- notes
 	on v.resourceId = n.resourceId -- top/main level only, uses resourceid and not resourceComponentId
 left outer join NotesEtcTypes nt
 	on n.notesEtcTypeId = nt.notesEtcTypeId
+	--and nt.notesEtcLabel in ('Physical Characteristics and Technical Requirements', 'Separated Material')
 where v.levelNumber = 0
-and nt.notesEtcLabel in ('Physical Characteristics and Technical Requirements', 'Separated Material')
+--and nt.notesEtcLabel in ('Physical Characteristics and Technical Requirements', 'Separated Material')
 order by v.levelNumber, v.sequenceNumber, cast(v.title as varchar)
 ;
 
@@ -141,8 +142,9 @@ left outer join ArchDescriptionRepeatingData n -- notes
 	on v.resourceComponentId = n.resourceComponentId 
 left outer join NotesEtcTypes nt
 	on n.notesEtcTypeId = nt.notesEtcTypeId
+	and nt.notesEtcLabel in ('Scope and Content', 'Physical Description', 'Physical Characteristics and Technical Requirements')
 where v.resourceLevel = 'series'
-and nt.notesEtcLabel in ('Scope and Content', 'Physical Description', 'Physical Characteristics and Technical Requirements')
+--and nt.notesEtcLabel in ('Scope and Content', 'Physical Description', 'Physical Characteristics and Technical Requirements')
 order by v.levelNumber, v.sequenceNumber, cast(v.title as varchar)
 ;
 
@@ -224,3 +226,8 @@ group by r.resourceid
 having count(*) > 1
 ;
 
+
+
+select *
+from at23_report
+;

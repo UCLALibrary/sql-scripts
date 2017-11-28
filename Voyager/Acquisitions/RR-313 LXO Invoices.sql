@@ -15,7 +15,7 @@ SELECT DISTINCT
 --, TO_CHAR(i.invoice_date,'FMMM/DD/YYYY')  last_inv_date
 --, i.invoice_date as last_inv_date_REAL
 --, i.invoice_number
-, li.piece_identifier
+, ili.piece_identifier
 
 from ucladb.purchase_order po
 
@@ -48,7 +48,4 @@ WHERE v.vendor_code = 'LXO'
 
 AND i.invoice_update_date BETWEEN to_date('2016-07-01', 'YYYY-MM-DD') and to_date('2017-06-30', 'YYYY-MM-DD')
 
-ORDER BY bt.title
-
---ORDER BY i.invoice_number
---LIKE  'UCLARCHG17Q1%'
+ORDER BY bt.title;

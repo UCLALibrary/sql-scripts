@@ -1,0 +1,78 @@
+AVERAGE CHARGES
+
+WITH laptop_counts AS
+(
+  SELECT 
+    cta.charge_location, 
+    trunc(cta.charge_date) AS charge_date, 
+    COUNT(cta.item_id) AS laptops
+  FROM 
+    ucladb.circ_trans_archive cta
+    INNER JOIN ucladb.item i ON cta.item_id = i.item_id
+  WHERE 
+    i.item_type_id = 50
+  GROUP BY 
+    cta.charge_location, 
+    trunc(cta.charge_date)
+  UNION
+  SELECT 
+    ct.charge_location, 
+    trunc(ct.charge_date) AS charge_date, 
+    COUNT(ct.item_id) AS laptops
+  FROM 
+    ucladb.circ_transactions ct
+    INNER JOIN ucladb.item i ON ct.item_id = i.item_id
+  WHERE 
+    i.item_type_id = 50
+  GROUP BY 
+    ct.charge_location, 
+    trunc(ct.charge_date)
+)
+SELECT
+	l.location_name,
+	floor(AVG(lc.laptops)) AS avg_laptops
+FROM
+	laptop_counts lc
+        LEFT OUTER JOIN ucladb.location l ON lc.charge_location = l.location_id
+WHERE
+	lc.charge_date BETWEEN trunc(to_date(#prompt('START')#, 'YYYY-MM-DD')) AND trunc(to_date(#prompt('END')#, 'YYYY-MM-DD'))
+GROUP BY
+	l.location_name,
+        lc.charge_location
+
+
+HISTORICAL CHARGES
+SELECT 
+  nvl(p.institution_id, 'N/A') as institution_id,
+  pg.patron_group_display,
+  l.location_name AS charge_location,
+  count(cta.circ_transaction_id) AS charges
+FROM
+  ucladb.item i
+  INNER JOIN ucladb.circ_trans_archive cta ON i.item_id = cta.item_id
+  INNER JOIN ucladb.patron_group pg ON cta.patron_group_id = pg.patron_group_id
+  INNER JOIN ucladb.location l ON cta.charge_location = l.location_id
+  LEFT JOIN ucladb.patron p ON cta.patron_id = p.patron_id
+WHERE
+  i.item_type_id = 50
+  AND trunc(cta.charge_date) between trunc(to_date(#prompt('DATE1')#,'YYYY-MM-DD')) 
+                                                        AND trunc(to_date(#prompt('DATE2')#,'YYYY-MM-DD'))
+GROUP BY
+  p.institution_id,
+  pg.patron_group_display,
+  l.location_name
+
+DATE/PLACE CHARGES
+SELECT DISTINCT
+	#prompt('STARTDAY')# AS start_date,
+	#prompt('ENDDAY')# AS end_date,
+	l.location_name,
+	vger_support.laptop_trans_date_place(i.perm_location,#prompt('STARTDAY')#,#prompt('ENDDAY')#) AS charges
+FROM 
+	ucladb.item i
+	INNER JOIN ucladb.location l ON i.perm_location = l.location_id
+WHERE
+	i.item_type_id = 50
+
+
+TOP BORROWERS

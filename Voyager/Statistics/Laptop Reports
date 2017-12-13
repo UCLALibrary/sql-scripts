@@ -76,3 +76,38 @@ WHERE
 
 
 TOP BORROWERS
+SELECT 
+  nvl(p.institution_id, 'N/A') as institution_id,
+  pg.patron_group_display,
+  count(cta.circ_transaction_id) AS charges
+FROM
+  ucladb.item i
+  INNER JOIN ucladb.circ_trans_archive cta ON i.item_id = cta.item_id
+  INNER JOIN ucladb.patron_group pg ON cta.patron_group_id = pg.patron_group_id
+  LEFT JOIN ucladb.patron p ON cta.patron_id = p.patron_id
+WHERE
+  i.item_type_id = 50
+GROUP BY
+  p.institution_id,
+  pg.patron_group_display
+
+IPADS
+SELECT 
+  nvl(p.institution_id, 'N/A') as institution_id,
+  pg.patron_group_display,
+  l.location_name AS charge_location,
+  count(cta.circ_transaction_id) AS charges
+FROM
+  ucladb.item i
+  INNER JOIN ucladb.circ_trans_archive cta ON i.item_id = cta.item_id
+  INNER JOIN ucladb.patron_group pg ON cta.patron_group_id = pg.patron_group_id
+  INNER JOIN ucladb.location l ON cta.charge_location = l.location_id
+  LEFT JOIN ucladb.patron p ON cta.patron_id = p.patron_id
+WHERE
+  i.item_type_id = 64
+  AND trunc(cta.charge_date) between trunc(to_date(#prompt('DATE1')#,'YYYY-MM-DD')) 
+                                                        AND trunc(to_date(#prompt('DATE2')#,'YYYY-MM-DD'))
+GROUP BY
+  p.institution_id,
+  pg.patron_group_display,
+  l.location_name

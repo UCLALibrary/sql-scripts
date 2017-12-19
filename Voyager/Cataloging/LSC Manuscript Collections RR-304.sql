@@ -1,5 +1,6 @@
 /*  LSC Manuscript collections, selected locations
     RR-304, refinement of RR-282
+    Revised again 2017-10-19, on VBT-304
 */
 -- Create working table for performance/analysis
 create table vger_report.tmp_vbt304 as
@@ -68,7 +69,7 @@ commit;
 select
   d.*
 , vger_subfields.GetSubfields(d.bib_id, '040e') as f040e
-, ucladb.GetAllBibTag(d.bib_id, '506', 2) as f506_all
+, vger_subfields.GetSubfields(d.bib_id, '300a,300f') as f300_af
 , (select count(*) from ucladb.mfhd_item where mfhd_id = d.mfhd_id) as items
 from vger_report.tmp_vbt304 d
 order by location_code, bib_id, mfhd_id

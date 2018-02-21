@@ -226,8 +226,82 @@ group by r.resourceid
 having count(*) > 1
 ;
 
-
-
-select *
-from at23_report
+-- revised file list
+select 
+	s.title as series_title
+,	s.resourcelevel
+,	v.title as file_title
+,	v.dateExpression
+,	case
+		when adi.container1NumericIndicator is not null then coalesce(adi.container1Type, '') + ' ' + cast(adi.container1NumericIndicator as varchar(10))
+		else ''
+	end as instance_label_1
+,	case
+		when adi.container2NumericIndicator is not null then coalesce(adi.container2Type, '') + ' ' + cast(adi.container2NumericIndicator as varchar(10))
+		else ''
+	end as instance_label_2
+,	case
+		when adi.container3NumericIndicator is not null then coalesce(adi.container3Type, '') + ' ' + cast(adi.container3NumericIndicator as varchar(10))
+		else ''
+	end as instance_label_3
+,	nt.notesEtcLabel -- use the standard consistent label, not the resource-specific override
+--,	n.title as noteTitle
+,	replace(cast(n.noteContent as varchar(max)), char(10), '') as noteContent
+from at23_report v
+-- include some parent info for files
+inner join at23_report s on v.parentResourceComponentId = s.resourceComponentId
+inner join ArchDescriptionInstances adi on v.resourceComponentId = adi.resourceComponentId
+left outer join ArchDescriptionRepeatingData n -- notes
+	on v.resourceComponentId = n.resourceComponentId 
+left outer join NotesEtcTypes nt
+	on n.notesEtcTypeId = nt.notesEtcTypeId
+where v.resourceLevel = 'file'
+--and v.parentResourceComponentId = 395215
+--and nt.notesEtcLabel in ('Scope and Content', 'Physical Description', 'General note')
+order by s.levelNumber, s.sequenceNumber, cast(s.title as varchar), v.sequenceNumber, cast(v.title as varchar)
 ;
+
+select * from resourcescomponents where resourcecomponentid = 395215;
+select * from dbo.ResourcesComponents where parentResourceComponentId = 395215 order by cast(title as varchar);
+select * from resourcescomponents where persistentid = 'ref352' and cast(title as varchar) = 'Film';
+
+select * from resourcescomponents where persistentid = 'ref352' and resourceid != 1220; -- 122 rows
+select * from resourcescomponents where persistentid != 'ref352' and resourceid = 1220; -- 38 rows
+
+
+
+select * from at23_report where cast(title as varchar) like '%Crawford%';
+
+
+select
+	r.resourceId
+,	r.title as collection_title
+,	r.dateExpression
+,	r.resourceLevel
+,	r.resourceidentifier1 + ' ' + r.resourceidentifier2 as collection_number
+,	rc.resourceComponentId
+,	rc.resourceLevel
+,	rc.sequenceNumber
+,	rc.hasChild
+,	rc.title
+from dbo.Resources r
+inner join dbo.ResourcesComponents rc on r.resourceId = rc.resourceId
+where r.resourceidentifier1 = 'LSC'
+and r.resourceidentifier2 = '0342'
+order by rc.sequenceNumber 
+;
+
+
+
+
+
+
+
+
+
+
+
+
+/*Synanon LSC 0342
+LSC 1179 richard and dion neutra papers
+*/

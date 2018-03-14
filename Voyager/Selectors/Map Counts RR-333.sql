@@ -11,7 +11,8 @@ select
 from location l
 inner join item i on l.location_id = i.perm_location
 inner join item_type it on i.item_type_id = it.item_type_id
-where l.location_code in ('sgput', 'sgputmaps', 'yralmapt', 'yrmapat', 'yrmapc', 'yrmaphmpc', 'yrmaphtlc', 'yrmaphvfc', 'yrmapstx', 'yr', 'yr*', 'yr**', 'yr***', 'yrrisrr')
+--where l.location_code in ('sgput', 'sgputmaps', 'yralmapt', 'yrmapat', 'yrmapc', 'yrmaphmpc', 'yrmaphtlc', 'yrmaphvfc', 'yrmapstx', 'yr', 'yr*', 'yr**', 'yr***', 'yrrisrr')
+where l.location_code like 'sr%'
 and it.item_type_code = 'map'
 group by l.location_code, it.item_type_display
 order by l.location_code, it.item_type_display
@@ -34,4 +35,16 @@ order by l.location_code
 select '| ' || location_code || ' | ' || holdings || ' | ' || items || ' |'
 from d
 order by location_code
+;
+
+
+-- Bib based: bibs, holdings and items counts where bib has cartographic record type
+select
+  count(distinct bt.bib_id) as bibs
+, count(distinct bm.mfhd_id) as hols
+, count(distinct mi.item_id) as items
+from bib_text bt
+inner join bib_mfhd bm on bt.bib_id = bm.bib_id
+left outer join mfhd_item mi on bm.mfhd_id = mi.mfhd_id
+where regexp_like(bt.bib_format, '^[ef]')
 ;

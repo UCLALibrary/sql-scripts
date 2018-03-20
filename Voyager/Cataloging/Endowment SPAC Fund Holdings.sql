@@ -30,6 +30,8 @@ select spac, fund from d
 ;
 create index vger_report.ix_tmp_rr283_funds on vger_report.tmp_rr283_funds (fund, spac);
 
+grant select on vger_report.tmp_rr283_funds to ucla_preaddb;
+
 -- Drop initial import table
 drop table vger_report.tmp_rr283_import purge;
 
@@ -53,7 +55,8 @@ order by fund, spac;
 
 with d as (
   select
-    s.spac
+    s.spac as spac_code
+  , sm.name as spac_name
   , s.fund as fund_code
   , f.ledger_name
   , f.fund_name
@@ -84,6 +87,8 @@ with d as (
     on ili.line_item_id = li.line_item_id
   inner join ucladb.line_item_copy_status lics
     on ilif.copy_id = lics.copy_id
+  left outer join vger_support.spac_map sm
+    on s.spac = sm.code
   -- TESTING
   -- JOPAGE 11, KPM1 24, ABUNT 34
   --where s.spac = 'ABUNT' 
@@ -119,21 +124,51 @@ order by fund_code, spac
 -- Data reported, listing records needing SPACs added to bibs/mfhds or both
 -- 12251 rows as of 2017-07-10
 select distinct -- since invoice-based, and many POs have multiple invoices
-  fund_code
+/*  fund_code
 , fund_name
-, spac
+, spac_code
+, spac_name
 , bib_id
 , mfhd_id
+*/
+  bib_id
+, mfhd_id
+, spac_code
+, spac_name
 from d
-where bib_spac_exists is null
-or mfhd_spac_exists is null
-order by fund_code, spac, bib_id, mfhd_id
+where ( bib_spac_exists is null or mfhd_spac_exists is null)
+-- line_item_copy_status references some holdings which no longer exist at all...
+and exists (
+  select *
+  from ucladb.mfhd_master
+  where mfhd_id = d.mfhd_id
+)
+--order by fund_code, spac_code, bib_id, mfhd_id
+order by spac_code, bib_id, mfhd_id
 ;
 
-
-
-
-
+-- Funds/SPACs and most recent fiscal period in which invoices were paid
+select 
+  s.spac
+, (select name from vger_support.spac_map where code = s.spac) as spac_name
+, f.fund_code
+, f.fund_name
+, max(vger_support.Get_Fiscal_Period(i.invoice_status_date)) as latest_fp
+from vger_report.tmp_rr283_funds s
+-- Verified all fund codes provided via Excel still exist...
+inner join ucladb.ucla_fundledger_vw f
+  on s.fund = f.fund_code
+left outer join ucladb.invoice_line_item_funds ilif
+  on f.ledger_id = ilif.ledger_id
+  and f.fund_id = ilif.fund_id
+left outer join ucladb.invoice_line_item ili
+  on ilif.inv_line_item_id = ili.inv_line_item_id
+left outer join ucladb.invoice i
+  on ili.invoice_id = i.invoice_id
+where (i.invoice_status = 1 or i.invoice_status is null) -- Approved, or no invoices
+group by s.spac, f.fund_code, f.fund_name
+order by s.spac, f.fund_code, latest_fp
+;
 
 -- Cleanup
 --drop table vger_report.tmp_rr283_funds purge;

@@ -23,12 +23,13 @@ select
 , vger_subfields.GetSubfields(mm.mfhd_id, '852x', 'mfhd', 'ucladb') as f852x
 , vger_subfields.GetSubfields(mm.mfhd_id, '852z', 'mfhd', 'ucladb') as f852z
 , ucladb.GetAllMfhdTag(mm.mfhd_id, '901') as f901
+, ucladb.GetAllMfhdTag(mm.mfhd_id, '916') as f916
 , ucladb.GetAllMfhdTag(mm.mfhd_id, '917') as f917
 from location l
 inner join mfhd_master mm on l.location_id = mm.location_id
 inner join bib_mfhd bm on mm.mfhd_id = bm.mfhd_id
 inner join bib_text bt on bm.bib_id = bt.bib_id
-where l.location_code in ('yrspback', 'yrspbcbc', 'yrspbcbc*', 'yrspeip', 'yrspeip*', 'yrspeip**')
+where l.location_code in ('yrspback', 'yrspbcbc', 'yrspbcbc*', 'yrspeip', 'yrspeip*', 'yrspeip**', 'yrspald')
 order by l.location_code, mm.normalized_call_no
 ;
 -- 15033 rows
@@ -53,6 +54,7 @@ select
 , vger_subfields.GetSubfields(mm.mfhd_id, '852x', 'mfhd', 'ucladb') as f852x
 , vger_subfields.GetSubfields(mm.mfhd_id, '852z', 'mfhd', 'ucladb') as f852z
 , ucladb.GetAllMfhdTag(mm.mfhd_id, '901') as f901
+, ucladb.GetAllMfhdTag(mm.mfhd_id, '916') as f916
 , ucladb.GetAllMfhdTag(mm.mfhd_id, '917') as f917
 , ucladb.GetAllBibTag(bt.bib_id, '050') as f050
 , ucladb.GetAllBibTag(bt.bib_id, '090') as f090
@@ -63,7 +65,7 @@ inner join bib_mfhd bm on mm.mfhd_id = bm.mfhd_id
 inner join bib_text bt on bm.bib_id = bt.bib_id
 -- must have selected 910 $a
 inner join vger_subfields.ucladb_bib_subfield bs on bt.bib_id = bs.record_id and bs.tag = '910a'
-where l.location_code in ('yrspback', 'yrspbcbc', 'yrspbcbc*', 'yrspeip', 'yrspeip*', 'yrspeip**')
+where l.location_code in ('yrspback', 'yrspbcbc', 'yrspbcbc*', 'yrspeip', 'yrspeip*', 'yrspeip**', 'yrspald')
 and bs.subfield in ('oclcmellon1', 'oclcmellon2match', 'oclcmellon2nomatch')
 order by l.location_code, mm.normalized_call_no
 ;

@@ -2,12 +2,10 @@
     RR-342
 */
 
---with d as (
-select 
+select distinct
   v.vendor_code
 , pot.po_type_desc as po_type
 , f.fiscal_period_name
---, f.ledger_name
 , f.fund_code
 , ucladb.toBaseCurrency(ilif.amount, i.currency_code, i.conversion_rate) as usd_amount
 , bm.mfhd_id
@@ -64,18 +62,10 @@ left outer join item i on mi.item_id = i.item_id
 left outer join item_barcode ib on i.item_id = ib.item_id and ib.barcode_status = 1 -- Approved
 where ist.invoice_status_desc = 'Approved'
 and v.vendor_code in ('YBP', 'YBPUK', 'LFD', 'ASU', 'CHD', 'CHD1', 'COU', 'COUNIJ', 'HEN')
-and f.ledger_name in ('SSHA CRIS 04-05', 'SSHA CRIS Approval Plans 04-05', 'SSHA CRIS SP 04-05')
+-- Ledgers (3): SSHA CRIS, SSHA CRIS Approval, SSHA CRIS SP
+--and f.ledger_name like '%CRIS%05-06' -- change as needed for 04-05 and 05-06
+-- Ledgers (4): CRIS, Contracts & Grants, Spec/Found, Spec/Regental - case-insensitive, case changed in 15-16
+and regexp_like(f.ledger_name, '^(Contracts|CRIS|Spec\/).+16-17', 'i') -- change as needed for 06-07 thru 16-17
 and substr(bt.bib_format, 2, 1) = 'm' -- bib level
---and bm.mfhd_id is null
 order by vendor_code, bib_id, mfhd_id, item_enum
---) select count(*) from d
 ;
--- 18376 of 20329 are eng for 2004-2005
-select * from ledger where fiscal_year_id = 1 order by ledger_name;
-
-
-select * from reserve_item_history where sysdate between effect_date and expire_date;
-select * from item where short_loan_charges > 0;
-select * from invoice_line_item_funds;
-select * from line_item_copy_status where mfhd_id = 6943303;
-select count(*) from line_item_copy_status where item_id is null;

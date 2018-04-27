@@ -93,6 +93,8 @@ with acq as (
   , vger_support.unifix(bt.title) as title
   , vger_support.unifix(ucladb.GetTag(bt.bib_id, 'B', '650', 1)) as f650_1
   , vger_support.unifix(ucladb.GetTag(bt.bib_id, 'B', '650', 2)) as f650_2
+  , ucladb.GetBibTag(bt.bib_id, '981') as f981
+  , ucladb.GetBibTag(bt.bib_id, '982') as f982
   , l.location_code as loc_code
   , ucladb.GetMfhdSubfield(mm.mfhd_id, '852', 'h') as f852h
   from invoice i
@@ -114,10 +116,9 @@ with acq as (
   where ist.invoice_status_desc = 'Approved'
   and v.vendor_code in ('YBP', 'YBPUK', 'LFD', 'ASU', 'CHD', 'CHD1', 'COU', 'COUNIJ', 'HEN')
   -- total of 50 ledgers: 3x CRIS in 04-05 and 05-06, and 4x various in 06-07 through 16-17
-  and (f.ledger_name like '%CRIS%' or regexp_like(f.ledger_name, '^(Contracts|CRIS|Spec\/).+', 'i'))
+  and (f.ledger_name like '%CRIS%' or regexp_like(f.ledger_name, '^(AUL|Contracts|CRIS|Spec\/).+', 'i'))
   and f.fiscal_period_name <= '2016-2017' -- 2004/05 thru 2016/17
   and substr(bt.bib_format, 2, 1) = 'm' -- bib level
---AND mm.mfhd_id = 5330435 --TESTING
 )
 , items as (
   select
@@ -156,6 +157,8 @@ select
 , acq.title
 , acq.f650_1
 , acq.f650_2
+, acq.f981
+, acq.f982
 , acq.loc_code
 , acq.f852h
 , (select items from items where mfhd_id = acq.mfhd_id) as items
@@ -178,6 +181,8 @@ group by
 , acq.title
 , acq.f650_1
 , acq.f650_2
+, acq.f981
+, acq.f982
 , acq.loc_code
 , acq.f852h
 order by acq.bib_id, acq.mfhd_id

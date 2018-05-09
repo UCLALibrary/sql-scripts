@@ -16,12 +16,18 @@ select
 , trunc(bh.action_date) as create_date
 , coalesce(bh.encoding_level, '#') as enc_lvl -- show # for blank
 -- Days between bib creation and overlay by daily OCLC loader (if ever)
-, round( ( select min(action_date) from bib_history
-      where bib_id = bh.bib_id
-      and operator_id = 'uclaloader'
+, round( (  select min(action_date) from bib_history
+            where bib_id = bh.bib_id
+            and operator_id = 'uclaloader'
     ) 
   - bh.action_date
 ) as days_to_catalog
+-- Number of updates done by non-LIS locations
+, ( select count(*) from bib_history
+    where bib_id = bh.bib_id
+    and action_type_id = 2 -- Update, which always has non-zero location_id
+    and location_id != 203 -- lissystem
+) as updates
 , vger_subfields.GetSubfields(pc.bib_id, '948a,948b') as f948ab
 , vger_subfields.GetSubfields(pc.bib_id, '981b,981c') as f981bc
 , vger_subfields.GetSubfields(pc.bib_id, '982b') as f982b
@@ -32,4 +38,5 @@ inner join bib_history bh
   and bh.operator_id = 'promptcat'
 order by pc.bib_id
 ;
+
 

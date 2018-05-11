@@ -27,7 +27,12 @@ select
     where bib_id = bh.bib_id
     and action_type_id = 2 -- Update, which always has non-zero location_id
     and location_id != 203 -- lissystem
-) as updates
+) as human_updates
+, ( select count(*) from bib_history
+    where bib_id = bh.bib_id
+    and action_type_id = 2 -- Update, which always has non-zero location_id
+    and operator_id = 'uclaloader'
+) as uclaloader_updates
 , vger_subfields.GetSubfields(pc.bib_id, '948a,948b') as f948ab
 , vger_subfields.GetSubfields(pc.bib_id, '981b,981c') as f981bc
 , vger_subfields.GetSubfields(pc.bib_id, '982b') as f982b

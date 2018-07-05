@@ -4,8 +4,8 @@
 */
 
 -- CHANGE THE DATES FOR THE FISCAL YEAR
-define FY_START = '20160701 000000';
-define FY_END   = '20170630 235959';
+define FY_START = '20170701 000000';
+define FY_END   = '20180630 235959';
 
 with units as (
 select

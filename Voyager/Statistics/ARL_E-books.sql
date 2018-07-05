@@ -2,7 +2,7 @@
 -- Used starting 2012/2013, per Roxanne Peck; see Footprints 29910
 
 -- Change end_date to start of fiscal year after the one you want (e.g., 20080701 for 2007/2008)
-define end_date = '20170701';
+define end_date = '20180701';
 
 create table vger_report.tmp_ebook_bibs as
 select distinct -- a few bibs have multiple 'in' holdings.......
@@ -34,6 +34,7 @@ select count(*) from tmp_ebook_bibs;
 -- 830366 20150702 for 2014/2015
 -- 868697 20160718 for 2015/2016
 -- 913676 20170705 for 2016/2017
+-- 1034386 20180705 for 2017/2018
 
 -- Working table with all 856 fields for tmp_ebook_bibs
 -- Takes about 5 minutes to create
@@ -55,6 +56,7 @@ select count(distinct bib_id) from vger_report.tmp_ebook_urls;
 -- 830284 20150702 for 2014/2015
 -- 867669 20160718 for 2015/2016
 -- 912984 20170705 for 2016/2017
+-- 1034315 20180705 for 2017/2018
 
 /*********
   Start with working tables, include / exclude based on various criteria
@@ -127,12 +129,14 @@ with d as (
 select count(distinct bib_id) as bibs
 from d
 ;
+-- REPORT THIS FIGURE ANNUALLY, on the E-Books sheet in the UCOP Voyager stats Excel file.
 -- 2013-03-25: 664221 before minus, 663085 after.  664221-663085 = 1136, count of group 3.
 -- 735257 20130701 for 2012/2013.  This is the figure reported on E-books sheet in file sent to Leslie.  No need to report e-monos & e-atlases separately per Leslie.
 -- 781437 20140702 for 2013/2014.
 -- 825532 20150702 for 2014/2015.
 -- 862728 20160718 for 2015/2016
 -- 907841 20170705 for 2016/2017
+-- 1028914 20180705 for 2017/2018
 
 /***** Individual queries for testing / clean-up *****/
 

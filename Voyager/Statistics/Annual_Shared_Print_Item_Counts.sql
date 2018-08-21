@@ -48,6 +48,7 @@ and it.item_type_name = 'WEST Bronze'
 -- 26608 items 2015-07-31
 -- 26637 items 2016-07-25
 -- 26748 items 2017-07-10
+-- 17853 items 2018-08-21
 
 -- (B) Shared Print Monographic series
 with mfhds as (
@@ -80,3 +81,4 @@ and it.item_type_name = 'Shared Print in Place'
 -- 100 items 2015-07-31
 -- 131 items 2016-07-25
 -- 168 items 2017-07-10
+-- 170 items 2018-08-21

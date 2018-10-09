@@ -1,6 +1,7 @@
 /*  LSC Manuscript collections, selected locations
     RR-304, refinement of RR-282
     Revised again 2017-10-19, on VBT-304
+    Revised again 2018-10-09, on RR-396
 */
 -- Create working table for performance/analysis
 create table vger_report.tmp_vbt304 as
@@ -70,6 +71,8 @@ select
   d.*
 , vger_subfields.GetSubfields(d.bib_id, '040e') as f040e
 , vger_subfields.GetSubfields(d.bib_id, '300a,300f') as f300_af
+-- 20181009 another change: Add 540 per RR-396
+, vger_support.unifix(ucladb.GetMarcField(d.bib_id, 0, 0, '540', '', 'abcdu3568')) as f540
 , (select count(*) from ucladb.mfhd_item where mfhd_id = d.mfhd_id) as items
 from vger_report.tmp_vbt304 d
 order by location_code, bib_id, mfhd_id

@@ -1,3 +1,4 @@
+drop table vger_report.tmp_gbs_import purge;
 create table vger_report.tmp_gbs_import (
   bib_id int not null
 , bib_level char(1)
@@ -22,17 +23,17 @@ create table vger_report.tmp_gbs_import (
 )
 ;
 /*
-  Imported all 559869 rows from UCLA 4/2018 list except for 1:
+  Imported 626986 rows from combined 11/2018 list; skipped 1:
   Bib 6535150 has f245b longer than 2000 nchar which sqlldr can't handle, but
   it's for L0099884124 a biomed loc so no matter.
 */
+select count(*) from vger_report.tmp_gbs_import;
 grant select on vger_report.tmp_gbs_import to ucla_preaddb;
 create index vger_report.ix_tmp_gbs_import on vger_report.tmp_gbs_import (item_barcode);
--- drop table vger_report.tmp_gbs_import purge;
 
 -- Remove non-YRL items since we're only sending from YRL now
 delete from vger_report.tmp_gbs_import where loc_code not like 'yr%';
--- 503418
+-- 585,852 rows deleted 2018-11-15
 commit;
 
 select * --count(*) 
@@ -46,8 +47,7 @@ and NOT exists (
   where item_barcode = g.item_barcode
 )
 ;
--- 3018 not found by barcode; 2961 of those have been deleted
--- 57 unaccounted for?
+
 -- Remove them all, since we can't easily match item-level data without matching barcodes
 delete from vger_report.tmp_gbs_import g
 where not exists (
@@ -55,9 +55,10 @@ where not exists (
   where item_barcode = g.item_barcode
 )
 ;
+-- 3,153 rows deleted 2018-11-15
 commit;
 
--- Remove 2920 items which are now in SRLF, and 2 more currently not in YRL
+-- Remove items which, per their barcodes, are no longer in YRL - mostly moved to SRLF
 delete from vger_report.tmp_gbs_import g
 where item_barcode in (
   select
@@ -71,10 +72,12 @@ where item_barcode in (
   and l.location_code not like 'yr%'
 )
 ;
+-- 3,654 rows deleted 2018-11-15
 commit;
 
--- This leaves 50510 items in YRL to try to pull
+-- This leaves items in YRL which theoretically should be pulled
 select count(*) from vger_report.tmp_gbs_import;
+-- 34327 2018-11-15
 
 -- Generate picklist, using *current* loc and item status
 select 

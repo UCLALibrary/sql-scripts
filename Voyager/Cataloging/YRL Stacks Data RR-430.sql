@@ -2,7 +2,7 @@
     RR-430
 */
 
--- Working table
+-- Working table: run on server, takes about 50 minutes
 create table vger_report.tmp_rr_430 as
 select
   ( select replace(normal_heading, 'UCOCLC') 
@@ -52,6 +52,9 @@ select
   end as summ_hlds
 , vger_subfields.GetSubfields(bt.bib_id, '776i,776a,776t,776w') as other_form
 , ucladb.GetAllBibTag(bt.bib_id, '856', 2) as urls
+-- To be added later
+, cast(null as int) as oclc_holdings
+, cast(null as char(1)) as held_by_nrlf
 from ucladb.location l
 inner join ucladb.mfhd_master mm on l.location_id = mm.location_id
 inner join ucladb.bib_mfhd bm on mm.mfhd_id = bm.mfhd_id
@@ -67,7 +70,9 @@ and mm.normalized_call_no is not null
 select sum(mfhd_count) from ucladb.location l where l.location_code in ('yr', 'yr*', 'yr**', 'yr***', 'yrncrc', 'yrpe', 'yrper');
 -- 1550864 20190205
 select count(*) from vger_report.tmp_rr_430;
--- 1492093 20190206
+-- 1493255 20190210
+select count(distinct oclc) from vger_report.tmp_rr_430;
+-- 1479685 20190210
 
 select * from vger_report.tmp_rr_430 where mfhd_id in (
   select mfhd_id from vger_report.tmp_rr_430 group by mfhd_id having count(*) > 1

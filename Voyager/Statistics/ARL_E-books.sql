@@ -2,7 +2,7 @@
 -- Used starting 2012/2013, per Roxanne Peck; see Footprints 29910
 
 -- Change end_date to start of fiscal year after the one you want (e.g., 20080701 for 2007/2008)
-define end_date = '20180701';
+define end_date = '20190701';
 
 create table vger_report.tmp_ebook_bibs as
 select distinct -- a few bibs have multiple 'in' holdings.......
@@ -27,7 +27,7 @@ and bt.bib_id <= (
 
 create index vger_report.ix_tmp_ebook_bibs on vger_report.tmp_ebook_bibs(bib_id);
 
-select count(*) from tmp_ebook_bibs;
+select count(*) from vger_report.tmp_ebook_bibs;
 -- 666975 20130325 for 2011/2012
 -- 739385 20130701 for 2012/2013
 -- 785828 20140702 for 2013/2014
@@ -35,9 +35,10 @@ select count(*) from tmp_ebook_bibs;
 -- 868697 20160718 for 2015/2016
 -- 913676 20170705 for 2016/2017
 -- 1034386 20180705 for 2017/2018
+-- 1121118 20190702 for 20182019
 
 -- Working table with all 856 fields for tmp_ebook_bibs
--- Takes about 5 minutes to create
+-- Takes about 2 minutes to create
 create table vger_report.tmp_ebook_urls as
 select distinct
   b.bib_id
@@ -57,6 +58,7 @@ select count(distinct bib_id) from vger_report.tmp_ebook_urls;
 -- 867669 20160718 for 2015/2016
 -- 912984 20170705 for 2016/2017
 -- 1034315 20180705 for 2017/2018
+-- 1121001 20190702 for 2018/2019
 
 /*********
   Start with working tables, include / exclude based on various criteria
@@ -137,6 +139,7 @@ from d
 -- 862728 20160718 for 2015/2016
 -- 907841 20170705 for 2016/2017
 -- 1028914 20180705 for 2017/2018
+-- 1115519 20190702 for 2018/2019
 
 /***** Individual queries for testing / clean-up *****/
 

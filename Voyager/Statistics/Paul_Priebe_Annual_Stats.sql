@@ -1,6 +1,6 @@
 -- Stats for work done by Paul Priebe, requested by Paul annually
-define start_date = '20150701';
-define end_date   = '20160701';
+define start_date = '20180701';
+define end_date   = '20190701';
 
 -- All bib records
 select 

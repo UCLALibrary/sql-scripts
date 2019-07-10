@@ -23,7 +23,7 @@
 
 */
 
-define CREATED_BEFORE = '2018-07-01';
+define CREATED_BEFORE = '2019-07-01';
 
 -- Report 1: No OCLC... somethings
 -- Really slow with location info; create temp table

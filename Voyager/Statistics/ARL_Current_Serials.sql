@@ -5,8 +5,8 @@
 */
 
 -- CHANGE THE DATES FOR THE FISCAL YEAR
-define FY_START = '20170701 000000';
-define FY_END   = '20180630 235959';
+define FY_START = '20180701 000000';
+define FY_END   = '20190630 235959';
 
 -- Temp table of all serial data for multiple reports
 drop table vger_report.tmp_serials purge;

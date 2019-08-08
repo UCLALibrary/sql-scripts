@@ -1,3 +1,4 @@
+/*
 1	UCLA Academic
 8	UCLA Acad Proxy
 12	UCLA Law Academic
@@ -6,7 +7,7 @@
 39	UCLA Acad NoLimit- DD
 40	UCLA Acad Proxy - DD
 48	UCLA Law Acad - DD
-
+*/
 
 SELECT
 	bg.patron_group_display AS borrower_group,
@@ -97,7 +98,7 @@ ORDER BY
 	borrower_group,
 	recaller_group
 
-
+/*
 TOTAL TRANSACTIONS
 1795
-
+*/

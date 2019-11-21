@@ -32,7 +32,8 @@ select
     inner join ucladb.location l3 on bl2.location_id = l3.location_id
     where bl2.bib_id = bt.bib_id
     --and l2.location_code != l.location_code
-    and l3.location_code like 'sr%'
+    --and l3.location_code like 'sr%' -- RR-434
+    and l3.location_code in ('sr', 'srucl', 'srucl2', 'srucl3', 'srucl4', 'srbuo')    
 ) as srlf_locs
 , substr(bt.bib_format, 2, 1) as bib_lvl
 , substr(bt.bib_format, 1, 1) as record_type

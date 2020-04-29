@@ -1,9 +1,9 @@
-/*  Clark Library bibs with 500 fields.
-    Two reports:
+/*  Clark Library bibs with 590 fields.
+    Two reports: 
     #1: Only Clark holdings
     #2: Clark holdings and any others
-
-    RR-543
+    
+    RR-551
 */
 
 with bibs as (
@@ -11,10 +11,10 @@ with bibs as (
     record_id as bib_id
   , field_seq
   from vger_subfields.ucladb_bib_subfield
-  where tag like '500%'
+  where tag like '590%'
 )
 , clark as (
-  select
+  select 
     bm.bib_id
   , bm.mfhd_id
   , b.field_seq
@@ -24,10 +24,10 @@ with bibs as (
   inner join location l on mm.location_id = l.location_id
   where l.location_code like 'ck%'
 )
---select count(distinct bib_id) from clark;
+--select count(distinct bib_id) from clark c;
 select distinct
   c.bib_id
-, vger_subfields.GetFieldFromSubfields(c.bib_id, c.field_seq) as f500
+, vger_subfields.GetFieldFromSubfields(c.bib_id, c.field_seq) as f590
 from clark c
 -- #1: where not exists (
 -- #2: where exists (
@@ -39,6 +39,6 @@ where exists (
 )
 order by bib_id
 ;
--- 71285 (57595, 13690)
+-- 45424 bibs (35452 no other holdings, 9972 other holdings)
 
 

@@ -28,9 +28,9 @@ inner join patron_barcode_status pbs on pb.barcode_status = pbs.barcode_status_t
 inner join patron p on ct.patron_id = p.patron_id
 left outer join patron_group pg on pb.patron_group_id = pg.patron_group_id
 where (l.location_name like 'CLICC%' or l2.location_name like 'CLICC%')
-and ct.charge_date >= to_date('20200226 000000', 'YYYYMMDD HH24MISS')
+--and ct.charge_date >= to_date('20200226 000000', 'YYYYMMDD HH24MISS')
 --and item_type_display not like 'CLICC%'
-order by p.last_name, p.first_name
+order by charge_date, p.last_name, p.first_name
 ;
 --2086 rows as of 2020-05-13 13:43:26
 

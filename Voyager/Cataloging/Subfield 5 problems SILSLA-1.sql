@@ -16,3 +16,20 @@ and subfield not in (
 )
 order by tag, sfd5, record_id
 ;
+
+-- Subfield counts
+select 
+  count(*) as subfields
+, count(distinct record_id) as bibs
+, tag
+, subfield
+from vger_subfields.ucladb_bib_subfield
+where tag like '%5'
+and subfield not in (
+  'CaLaRBC', 'CaLaUGAP', 'CaLaUCEA', 'CaLaUEM', 'CLU-FT', 'CLU', 'CLU-AR', 'CLU-ART', 'CLU-AUP', 'CLU-C', 'CLU-CHM', 'CLU-COL'
+, 'CLU-CS', 'CLU-EMS', 'CLU-EP', 'CLU-GG', 'CLU-HAPI', 'CLU-L', 'CLU-M', 'CLU-MAP', 'CLU-MGT', 'CLU-MS', 'CLU-NC', 'CLU-P'
+, 'CLU-PAS', 'CLU-REF', 'CLU-SC', 'CLU-TA', 'CLU-UA', 'CLU-UES', 'CLU-URL'
+)
+group by tag, subfield
+order by subfields desc
+;

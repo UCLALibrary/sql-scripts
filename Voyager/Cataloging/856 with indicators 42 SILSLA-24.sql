@@ -8,7 +8,7 @@ with bibs as (
   from vger_subfields.ucladb_bib_subfield
   where tag like '856%'
   and indicators = '42'
-  and rownum < 3001 -- SAMPLE FOR NOW
+  and rownum < 10001 -- SAMPLE FOR NOW
 )
 --select count(distinct record_id), count(*) from bib
 select
@@ -20,5 +20,6 @@ select
 ) as locs
 , vger_subfields.getfieldfromsubfields(b.record_id, b.field_seq) as f856
 from bibs b
+order by b.record_id, b.field_seq
 ;
 -- 61466 bibs	78118 urls

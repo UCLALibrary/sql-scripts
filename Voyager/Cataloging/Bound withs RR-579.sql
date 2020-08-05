@@ -14,8 +14,8 @@ select
 , mm.mfhd_id
 , l.location_code
 , mm.display_call_no
--- All mfhd 852 $z, via listagg
-, ( select listagg(subfield, ' *** ') within group (order by subfield_seq)
+-- All mfhd 852 $z, via listagg: unicode conversion required
+, ( select listagg(to_char(subfield), ' *** ') within group (order by subfield_seq)
     from vger_subfields.ucladb_mfhd_subfield
     where tag = '852z'
     and record_id = mm.mfhd_id
@@ -31,8 +31,8 @@ select
       and mi.mfhd_id = mm.mfhd_id
     )
 ) as item_owners
--- All bib 505 $5 in the given field, via listagg
-, ( select listagg(subfield, ' *** ') within group (order by subfield_seq)
+-- All bib 505 $5 in the given field, via listagg: unicode conversion required
+, ( select listagg(to_char(subfield), ' *** ') within group (order by subfield_seq)
     from vger_subfields.ucladb_bib_subfield
     where tag = '5015'
     and record_id = b.bib_id

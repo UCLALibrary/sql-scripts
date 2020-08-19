@@ -14,11 +14,13 @@ with bibs as (
 )
 select 
   b.bib_id
+, l.location_name
 , bh.action_date
 , bh.operator_id
 , trim(o.first_name || ' ' || o.last_name) as operator_name
 from bibs b
 inner join bib_history bh on b.bib_id = bh.bib_id
+left outer join location l on bh.location_id = l.location_id
 left outer join operator o on bh.operator_id = o.operator_id
 where action_date = (
   select max(action_date)
@@ -28,6 +30,3 @@ where action_date = (
 )
 order by b.bib_id
 ;
-
-
-

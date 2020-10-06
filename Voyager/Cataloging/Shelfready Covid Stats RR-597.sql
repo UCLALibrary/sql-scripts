@@ -3,13 +3,34 @@
     RR-597
 */
 -- Part B: SCP records added since (and including) 3/20/2020
-select count(*)
-from bib_history
-where operator_id = 'scploader'
-and action_type_id = 1 --create
-and action_date >= to_date('20200320', 'YYYYMMDD')
+with d as (
+  select
+    bh.bib_id
+    , case 
+        when bt.bib_format in ('am') then 'Books'
+        when bt.bib_format in ('ai', 'as') then 'Serials'
+        when bt.bib_format in ('cm', 'cs') then 'Scores'
+        when bt.bib_format in ('gm', 'gs', 'km', 'ks') then 'Videos/Visual materials'
+        when bt.bib_format in ('im', 'is', 'jm', 'js') then 'Sound recordings'
+        when bt.bib_format in ('mm', 'ms') then 'Computer Files'
+        else 'UNKNOWN: ' || bt.bib_format
+    end as format
+  from bib_history bh
+  inner join bib_text bt on bh.bib_id = bt.bib_id
+  where bh.operator_id = 'scploader'
+  and bh.action_type_id = 1 --create
+  and bh.action_date >= to_date('20200320', 'YYYYMMDD')
+)
+select
+  format
+, count(*) as bibs
+from d
+group by format
+order by format
 ;
--- 91620
+-- 91620 total
+
+select * from bib_text where bib_format = '2s';
 
 -- Part C: Shelf-ready records from various vendors, broken down by format
 with bibs as (

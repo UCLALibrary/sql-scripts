@@ -25,7 +25,7 @@ select
   format
 , count(*) as bibs
 from d
-group by format
+group by rollup(format)
 order by format
 ;
 -- 91620 total
@@ -60,7 +60,7 @@ with bibs as (
       else 'UNKNOWN: ' || bt.bib_format
     end as format
   from bibs b
-  inner join vger_subfields.ucladb_bib_subfield bs on b.bib_id = bs.record_id and bs.tag in ('910a', '910g')
+  inner join vger_subfields.ucladb_bib_subfield bs on b.bib_id = bs.record_id and bs.tag in ('910a', '910g', '920a')
   inner join bib_text bt on b.bib_id = bt.bib_id
   where lower(subfield) like 'bslw/lccoop%'
   or lower(subfield) like 'casalini%'

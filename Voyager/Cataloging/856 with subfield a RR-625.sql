@@ -9,6 +9,7 @@ select
     inner join location l on bl.location_id = l.location_id
     where bl.bib_id = bs.record_id
 ) as locs
+, bs.indicators
 , bs.subfield as f856a
 , vger_subfields.getfieldfromsubfields(bs.record_id, bs.field_seq) as f856
 from vger_subfields.ucladb_bib_subfield bs

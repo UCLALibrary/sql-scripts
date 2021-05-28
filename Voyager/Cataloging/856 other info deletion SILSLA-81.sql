@@ -136,10 +136,12 @@ with bibs as (
     or  upper(subfield) like '%USER''S AID%'
   )
 )
---select count(*) from bibs; --122407
+--select count(*), count(distinct record_id) from bibs where record_id <= 6000000; -- about half in bib_id 6M or below
+--122407 fields in 105914 bibs total
 select
   b.record_id as bib_id
 from bibs b
-where b.record_id <= 2000 -- TESTING
+inner join bib_text bt on b.record_id = bt.bib_id
 order by bib_id
 ;
+

@@ -10,7 +10,6 @@ select
 , bm.mfhd_id
 -- Other fields for review / cleanup
 , (select location_code from ucladb.location where location_id  = (select location_id from ucladb.mfhd_master where mfhd_id = bm.mfhd_id)) as loc
-, vger_support.unifix(bt.title) as title
 , case
     when exists (select * from ucladb.line_item where bib_id = bm.bib_id)
     then 'Y'
@@ -31,6 +30,7 @@ select
     when exists (select * from ucladb.reserve_list_eitems where eitem_id in (select eitem_id from ucladb.eitem where mfhd_id = bm.mfhd_id))
     then 'Y'
   end as on_e_reserve
+, vger_support.unifix(bt.title) as title
 from ucladb.bib_history bh
 inner join ucladb.location l1 on bh.location_id = l1.location_id and bh.action_type_id = 1 --Created
 inner join ucladb.bib_mfhd bm on bh.bib_id = bm.bib_id
@@ -78,11 +78,29 @@ and not exists (
 order by bm.bib_id
 ;
 
+grant select on vger_report.tmp_cotf_delete to ucla_preaddb;
+
 -- Stats
-select count(*), count(distinct bib_id) from vger_report.tmp_cotf_delete
-where has_fine = 'Y'
+select * from vger_report.tmp_cotf_delete
+where on_e_reserve is null
+and on_p_reserve is null
+and has_po is null
+and loc not like '%prscp'
+order by bib_id
 ;
--- 2911 bibs 2021-05-26 including ILL; 387 have fines with balances
+
+
+select * from vger_report.tmp_cotf_delete 
+;
+
+select 
+  mi.item_id
+, d.*
+, (select count(*) from ucladb.circ_trans_archive where item_id = mi.item_id) as hist_charges
+from vger_report.tmp_cotf_delete d
+left outer join ucladb.mfhd_item mi on d.mfhd_id = mi.mfhd_id
+where on_e_reserve is null
+order by loc, bib_id;
 
 -- Exports for Excel.  Uncomment the WITH start/end lines to get just unit totals.
 --with x as (

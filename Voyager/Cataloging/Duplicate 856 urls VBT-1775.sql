@@ -67,13 +67,15 @@ with d as (
   )
 )
 select
-  dp.bib_id
+  vger_support.get_oclc_number(dp.bib_id) as oclc
+, dp.bib_id
 , substr(bt.bib_format, 2, 1) as bib_lvl
 , vger_support.unifix(bt.title_brief) as title
 , dp.f856u
 , dp.f856x
 from dups dp
 inner join bib_text bt on dp.bib_id = bt.bib_id
+where bt.bib_format not like '%s'
 order by dp.bib_id, dp.f856u
 ;
 --14781 fields
